@@ -59,18 +59,6 @@ export const HITS: Sample[] = [
   },
 ];
 
-export const THUDS: Sample[] = [
-  {
-    index: 0,
-    sampler: new Sampler({
-      urls: {
-        1: `thud1.wav`,
-      },
-      baseUrl,
-    }),
-  },
-];
-
 export const WOOSH: Sample[] = [
   {
     index: 1,

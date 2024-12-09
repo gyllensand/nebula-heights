@@ -2,7 +2,7 @@ import React, { MutableRefObject, useRef } from "react";
 import { BoxGeometry, Texture, TextureLoader } from "three";
 import { Edges } from "@react-three/drei";
 import { GrainyMaterial } from "./GrainyMaterial";
-import { useFrame, useLoader } from "@react-three/fiber";
+import { useLoader } from "@react-three/fiber";
 import { GeneratedBlock, GeneratedData } from "./generateData";
 import { a, SpringValue } from "@react-spring/three";
 import { hexToRgb, pickRandom, pickRandomDecimalFromInterval } from "./utils";
@@ -19,23 +19,25 @@ export const BG_THEME = pickRandom([
   ...new Array(8).fill(null).map(() => Theme.Dark),
   Theme.Light,
 ]);
-const COLOR_THEME = pickRandom([
+export const COLOR_THEME = pickRandom([
   ...new Array(5)
     .fill(null)
     .map(() => [ColorMode.Plain, ColorMode.Plain, ColorMode.PlainDiff]),
   ColorMode.EveryOther,
 ]);
-const COLOR = pickRandom(BG_THEME === Theme.Dark ? LIGHT_COLORS : DARK_COLORS);
-const SECONDAY_COLOR = pickRandom(
+export const COLOR = pickRandom(
   BG_THEME === Theme.Dark ? LIGHT_COLORS : DARK_COLORS
 );
-const EMISSIVE_COLOR = pickRandom(
+export const SECONDARY_COLOR = pickRandom(
   BG_THEME === Theme.Dark ? LIGHT_COLORS : DARK_COLORS
 );
-const GRAIN_COLOR = pickRandom(GRAIN_COLORS);
-const EDGE_COLOR = pickRandom(EDGE_COLORS);
-const METALNESS = pickRandomDecimalFromInterval(0.8, 1.3);
-const OPACITY = pickRandom([
+export const EMISSIVE_COLOR = pickRandom(
+  BG_THEME === Theme.Dark ? LIGHT_COLORS : DARK_COLORS
+);
+export const GRAIN_COLOR = pickRandom(GRAIN_COLORS);
+export const EDGE_COLOR = pickRandom(EDGE_COLORS);
+export const METALNESS = pickRandomDecimalFromInterval(0.8, 1.3);
+export const OPACITY = pickRandom([
   0.9,
   0.9,
   pickRandomDecimalFromInterval(0.7, 0.9),
@@ -67,19 +69,11 @@ export const Block = ({
 }: BlockProps) => {
   const meshRef = useRef<BoxGeometry>(null);
 
-  useFrame(() => {
-    if (!meshRef.current) {
-      return;
-    }
-    // console.log(isPointerDown.current);
-    // meshRef.current.rotateX(+0.002);
-  });
-
   const blockColor =
     COLOR_THEME === ColorMode.EveryOther
       ? index % 2 === 0
         ? COLOR
-        : SECONDAY_COLOR
+        : SECONDARY_COLOR
       : COLOR;
 
   return (

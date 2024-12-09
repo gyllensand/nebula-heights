@@ -8,7 +8,7 @@ import {
   pickRandomIntFromInterval,
 } from "./utils";
 import BuildingStructure, { BG_THEME } from "./BuildingStructure";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Noise } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
 import { start } from "tone";
 import { DirectionalLight, PointLight } from "three";
@@ -16,12 +16,10 @@ import { a, useSpring, useSprings } from "@react-spring/three";
 import { generateData } from "./generateData";
 import { calculateOutwardPosition } from "./calculateOutwardPosition";
 import { POINT_COLORS, Theme } from "./constants";
-import { HITS, Sample, THUDS, WOOSH } from "./App";
+import { HITS, Sample, WOOSH } from "./App";
 import { ExplosionBlocks } from "./ExplosionBlocks";
 
 declare const $fx: any;
-
-$fx.features({});
 
 const structureRotation: [number, number, number] = pickRandom(
   [
@@ -37,6 +35,10 @@ const INITIAL_DATA = generateData();
 
 const BG_COLOR = BG_THEME === Theme.Dark ? "#000000" : "#ffffff";
 const POINT_COLOR = pickRandom(POINT_COLORS);
+const NOISE_FX = pickRandom([
+  ...new Array(10).fill(null).map(() => false),
+  true,
+]);
 
 const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
   const { aspect } = useThree((state) => ({
@@ -55,10 +57,6 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
 
   useEffect(() => {
     HITS.forEach((hit) => {
-      hit.sampler.toDestination();
-    });
-    THUDS.forEach((hit) => {
-      hit.sampler.volume.value = -15;
       hit.sampler.toDestination();
     });
     WOOSH.forEach((hit) => {
@@ -235,9 +233,6 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
         config: { mass: 3, tension: 100, friction: 15 },
       }));
 
-      // const thud = pickRandom(THUDS);
-      // triggerSound(thud);
-
       timeoutInterval.current = setTimeout(() => {
         if (!isPointerDown.current || timer.current < 6) {
           defaultRetract();
@@ -256,7 +251,7 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
             currentData.current.explosionBlocks.map(({ position }) =>
               calculateOutwardPosition(position, 500)
             );
-          console.log(currentData.current);
+
           currentData.current = {
             ...currentData.current,
             explosionBlocks: secondData.explosionBlocks.map((block, i) => ({
@@ -498,30 +493,7 @@ const Scene = ({ canvasRef }: { canvasRef: RefObject<HTMLCanvasElement> }) => {
           luminanceThreshold={0.2}
           luminanceSmoothing={0.8}
         />
-        {/* <GodRaySphere /> */}
-        {/* <Noise opacity={0.2} /> */}
-        {/* <LensFlare
-          blendFunction={BlendFunction.SCREEN} // The blend function of this effect.
-          enabled={true} // Boolean to enable/disable the effect.
-          opacity={1.0} // The opacity for this effect. Default: 1.0
-          starBurst={true} // Boolean to enable/disable the start burst effect. Can be disabled to improve performance.
-          glareSize={0.96} // The glare size. Default: 0.2
-          followMouse={false} // Set it to follow the mouse, ignoring the lens position. Default: false
-          lensPosition={[0, 0.5, 0]} // The position of the lens flare in 3d space.
-          starPoints={6} // The number of points for the star. Default: 6
-          flareSize={0.01} // The flare side. Default 0.01
-          flareSpeed={0.01} // The flare animation speed. Default 0.01
-          flareShape={0.01} // Changes the appearance to anamorphic. Default 0.01
-          animated={true} // Animated flare. Default: true
-          anamorphic={false} //Set the appearance to full anamorphic. Default: false
-          colorGain={new Color(70, 70, 70)} // Set the color gain for the lens flare. Must be a THREE.Color in RBG format.
-          // lensDirtTexture={`${process.env.PUBLIC_URL}/noise.png`} // Texture to be used as color dirt for starburst effect.
-          haloScale={0.5} // The halo scale. Default: 0.5
-          secondaryGhosts={true} // Option to enable/disable secondary ghosts. Default: true.
-          ghostScale={0.0} // Option to enable/disable secondary ghosts. Default: true.
-          aditionalStreaks={true} // Option to enable/disable aditional streaks. Default: true.
-          smoothTime={0.07} // The time that it takes to fade the occlusion. Default: 0.07
-        /> */}
+        {NOISE_FX ? <Noise opacity={0.1} /> : <></>}
       </EffectComposer>
     </>
   );
