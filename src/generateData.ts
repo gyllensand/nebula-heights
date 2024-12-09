@@ -7,10 +7,10 @@ import {
 
 declare const $fx: any;
 
-const EXPLOSION_BLOCKS = pickRandomIntFromInterval(5, 10);
-const SPACING = pickRandomDecimalFromInterval(10, 20);
-const CORE_SIZE = pickRandomIntFromInterval(1, 4);
-const BOX_SIZE = pickRandom([
+export const EXPLOSION_BLOCKS = pickRandomIntFromInterval(5, 10);
+export const SPACING = pickRandomDecimalFromInterval(10, 20);
+export const CORE_SIZE = pickRandomIntFromInterval(1, 4);
+export const BOX_SIZE = pickRandom([
   [6, 24],
   [12, 18],
 ]);
